@@ -1,0 +1,395 @@
+﻿url original: http://www.journaldev.com/2403/google-guice-dependency-injection-example-tutorial
+
+
+
+
+Google Guice es el marco para automatizar la inyección de dependencias en las aplicaciones. Si te has encontrado directamente aquí, te recomendaría que consultes el Ejemplo de inyección de dependencia donde aprendimos los problemas con el enfoque tradicional de creación de objetos y beneficios de implementación de la inyección de dependencia.
+
+En el último tutorial, aprendimos cómo podemos implementar la inyección de dependencia en las aplicaciones manualmente. Pero cuando el número de clases crece en una aplicación, es mejor buscar algún marco para automatizar esta tarea.
+
+Google Guice es uno de los principales frameworks cuyo trabajo principal es proporcionar la implementación automática de la inyección de dependencia. 
+Trabajaremos en el mismo ejemplo del último post y aprenderemos cómo podemos usar Google Guice para automatizar el proceso de implementación para la inyección de dependencias.
+
+Las dependencias de Google Guice están disponibles en maven central, por lo que para los proyectos de maven se puede añadir la siguiente dependencia para ello.
+
+Si tiene una aplicación java sencilla, puede descargar el archivo jar de Google Guice Home Page en Google Code. Tenga en cuenta que en este caso también tendrá que tener sus dependencias transitivas en el classpath o bien obtendrá excepción de tiempo de ejecución.
+
+Para mi ejemplo, tengo un proyecto de maven cuya estructura de proyecto se ve debajo de la imagen.
+
+Veamos cada uno de los componentes uno por uno.
+
+Clases de servicio
+
+EmailService es uno de la implementación de MessageService . Observe que la clase está anotada con la anotación @Singleton. Dado que los objetos de servicio se crean a través de clases de inyectores, esta anotación se proporciona para hacerles saber que las clases de servicio deben ser objetos singleton.
+
+Google Guice 3.0 agregó la compatibilidad con JSR-330 y podemos usar las anotaciones del paquete com.google.inject o javax.inject .
+
+Digamos que tenemos otra implementación de servicio para enviar mensajes de Facebook.
+
+Clase de consumidor
+
+Dado que estamos implementando la inyección de dependencia en nuestra aplicación, no inicializaremos la clase de servicio en la aplicación. 
+Google Guice soporta tanto la constructor-based setter-based constructor-based constructor. Nuestra clase de aplicación que consume el servicio se ve más abajo.
+
+Tenga en cuenta que he comentado el código para la inyección basada en constructor, esto viene muy bien cuando su aplicación proporciona algunas otras características también que no necesita objeto de clase de servicio.
+
+También observe la anotación de @Injector, esto será utilizado por Google Guice para inyectar la clase de implementación de servicio. Si no está familiarizado con las anotaciones, consulte el tutorial de anotaciones de java .
+
+Implementación del servicio vinculante
+
+Obviamente, google guice no sabrá qué servicio utilizar, tenemos que configurarlo mediante la extensión AbstractModule clase abstracta y proporcionar la implementación para el método configure() .
+
+Como puede ver que podemos enlazar cualquiera de la implementación a la clase de servicio. Por ejemplo, si queremos cambiar a EmailService sólo tendríamos que cambiar los enlaces.
+
+Aplicación del cliente
+
+Nuestra configuración está lista, vamos a ver cómo usarlo con una clase java sencilla.
+
+La implementación es muy fácil de entender. Necesitamos crear un objeto Injector usando el método createInjector () de la clase Guice donde pasamos nuestro objeto de implementación de clase inyector. Entonces usamos el inyector para inicializar nuestra clase del consumidor. 
+Si corremos por encima de la clase, producirá la siguiente salida.
+
+Si EmailService los enlaces a EmailService en la clase AppInjector entonces producirá la siguiente salida.
+
+Casos JUnit Test
+
+Puesto que queremos probar la clase MyApplication, no estamos obligados a crear la implementación real del servicio. Podemos tener una clase simple de implementación de servicio de Mock como a continuación.
+
+____________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+Sucio:
+
+Tutorial del ejemplo de inyección de dependencia de Google Guice
+14 DE AGOSTO DE 2016 POR PANKAJ 18 COMENTARIOS
+
+
+ 
+Google Guice es el marco para automatizar la inyección de dependencias en las aplicaciones. Si te has encontrado directamente aquí, te recomendaría que consultes el Ejemplo de inyección de dependencia donde aprendimos los problemas con el enfoque tradicional de creación de objetos y beneficios de implementación de la inyección de dependencia.
+
+En el último tutorial, aprendimos cómo podemos implementar la inyección de dependencia en las aplicaciones manualmente. Pero cuando el número de clases crece en una aplicación, es mejor buscar algún marco para automatizar esta tarea.
+
+Google Guice es uno de los principales frameworks cuyo trabajo principal es proporcionar la implementación automática de la inyección de dependencia. Trabajaremos en el mismo ejemplo del último post y aprenderemos cómo podemos usar Google Guice para automatizar el proceso de implementación para la inyección de dependencias.
+
+
+ 
+Las dependencias de Google Guice están disponibles en maven central, por lo que para los proyectos de maven se puede añadir la siguiente dependencia para ello.
+
+ <Dependencia>
+	 <GroupId> com.google.inject </ groupId>
+	 <ArtifactId> guice </ artifactId>
+	 <Versión> 3.0 </ version>
+ </ Dependency>
+Si tiene una aplicación java sencilla, puede descargar el archivo jar de Google Guice Home Page en Google Code. Tenga en cuenta que en este caso también tendrá que tener sus dependencias transitivas en el classpath o bien obtendrá excepción de tiempo de ejecución.
+
+Para mi ejemplo, tengo un proyecto de maven cuya estructura de proyecto se ve debajo de la imagen.
+
+
+Google Guice, Guice, Google Guice Ejemplo, Google Guice Tutorial, Guía de la inyección de dependencia
+Veamos cada uno de los componentes uno por uno.
+
+Clases de servicio
+
+ Paquete com.journaldev.di.services;
+
+ Public interface MessageService {
+
+	 Boolean sendMessage (String msg, String receipient);
+ }
+MessageService interfaz MessageService proporciona el contrato base para los servicios.
+
+
+ Paquete com.journaldev.di.services;
+
+ Import javax.inject.  Singleton ;
+
+ // import com.google.inject.Singleton;
+
+ @Semifallo
+ Public class EmailService implementa MessageService {
+
+	 Public boolean sendMessage (String msg, String receipient) {
+		 // un código de fantasía para enviar correo electrónico
+		 System.out.println ("Mensaje de correo electrónico enviado a" + receipient + "con message =" + msg);
+		 Devuelve verdadero;
+	 }
+
+ }
+EmailService es uno de la implementación de MessageService . Observe que la clase está anotada con la anotación @Singleton. Dado que los objetos de servicio se crean a través de clases de inyectores, esta anotación se proporciona para hacerles saber que las clases de servicio deben ser objetos singleton.
+
+Google Guice 3.0 agregó la compatibilidad con JSR-330 y podemos usar las anotaciones del paquete com.google.inject o javax.inject .
+
+Digamos que tenemos otra implementación de servicio para enviar mensajes de Facebook.
+
+ Paquete com.journaldev.di.services;
+
+ Import javax.inject.Singleton;
+
+ // import com.google.inject.Singleton;
+
+ @Semifallo
+ Public class FacebookService implementa MessageService {
+
+	 Public boolean sendMessage (String msg, String receipient) {
+		 // Algún código complejo para enviar un mensaje de Facebook
+		 System.out.println ("Mensaje enviado al usuario de Facebook" + receipient + "con message =" + msg);
+		 Devuelve verdadero;
+	 }
+
+ }
+Clase de consumidor
+
+Dado que estamos implementando la inyección de dependencia en nuestra aplicación, no inicializaremos la clase de servicio en la aplicación. Google Guice soporta tanto la constructor-based setter-based constructor-based constructor. Nuestra clase de aplicación que consume el servicio se ve más abajo.
+
+ Paquete com.journaldev.di.consumer;
+
+ Import javax.inject.Inject;
+
+ // import com.google.inject.Inject;
+ Import com.journaldev.di.services.MessageService;
+
+ Public class MyApplication {
+
+	 Servicio privado MessageService;
+	
+ // inyector basado en constructor
+ // @Inject
+ // public MyApplication (MessageService svc) {
+ // this.service = svc;
+ ¡Bienvenido!
+	
+	 // setter método injector
+	 @Inyectar
+	 Public void setService (MessageService svc) {
+		 This.service = svc;
+	 }
+	
+	 Public boolean sendMessage (String msg, String rec) {
+		 // alguna lógica de negocio aquí
+		 Return service.sendMessage (msg, rec);
+	 }
+ }
+Tenga en cuenta que he comentado el código para la inyección basada en constructor, esto viene muy bien cuando su aplicación proporciona algunas otras características también que no necesita objeto de clase de servicio.
+
+
+También observe la anotación de @Injector, esto será utilizado por Google Guice para inyectar la clase de implementación de servicio. Si no está familiarizado con las anotaciones, consulte el tutorial de anotaciones de java .
+
+Implementación del servicio vinculante
+
+Obviamente, google guice no sabrá qué servicio utilizar, tenemos que configurarlo mediante la extensión AbstractModule clase abstracta y proporcionar la implementación para el método configure() .
+
+ Paquete com.journaldev.di.injector;
+
+ Import com.google.inject.AbstractModule;
+ Import com.journaldev.di.services.EmailService;
+ Import com.journaldev.di.services.FacebookService;
+ Import com.journaldev.di.services.MessageService;
+
+ Public class AppInjector extends AbstractModule {
+
+	 @Anular
+	 Protected void configure () {
+		 // enlaza el servicio a la clase de implementación
+		 //bind(MessageService.class).to(EmailService.class);
+		
+		 // vincular MessageService a la implementación de Facebook Message
+		 Bind (MessageService.class) .to (FacebookService.class);
+		
+	 }
+
+ }
+Como puede ver que podemos enlazar cualquiera de la implementación a la clase de servicio. Por ejemplo, si queremos cambiar a EmailService sólo tendríamos que cambiar los enlaces.
+
+Aplicación del cliente
+
+Nuestra configuración está lista, vamos a ver cómo usarlo con una clase java sencilla.
+
+ Paquete com.journaldev.di.test;
+
+ Import com.google.inject.Guice;
+ Import com.google.inject.Injector;
+
+ Import com.journaldev.di.consumer.MyApplication;
+ Import com.journaldev.di.injector.AppInjector;
+
+ Public class ClientApplication {
+
+	 Public static void main (String [] args) {
+		 Inyector inyector = Guice.createInjector (nuevo AppInjector ());		
+		
+		 Aplicación MyApplication = injector.getInstance (MyApplication.class);
+		
+		 App.sendMessage ("Hola Pankaj", "pankaj@abc.com");
+	 }
+
+ }
+La implementación es muy fácil de entender. Necesitamos crear un objeto Injector usando el método createInjector () de la clase Guice donde pasamos nuestro objeto de implementación de clase inyector. Entonces usamos el inyector para inicializar nuestra clase del consumidor. Si corremos por encima de la clase, producirá la siguiente salida.
+
+ Mensaje enviado a usuario de Facebook pankaj@abc.com con message = Hi Pankaj
+Si EmailService los enlaces a EmailService en la clase AppInjector entonces producirá la siguiente salida.
+
+ Mensaje de correo electrónico enviado a pankaj@abc.com con message = Hi Pankaj
+Casos JUnit Test
+
+Puesto que queremos probar la clase MyApplication, no estamos obligados a crear la implementación real del servicio. Podemos tener una clase simple de implementación de servicio de Mock como a continuación.
+
+ Paquete com.journaldev.di.services;
+
+ Public class MockMessageService implementa MessageService {
+
+	 Public boolean sendMessage (String msg, String receipient) {
+		 Devuelve verdadero;
+	 }
+
+ }
+Mi clase de prueba JUnit 4 se ve más abajo.
+
+ Paquete com.journaldev.di.test;
+
+
+ Import org.junit.After;
+ Import org.junit.Assert;
+ Import org.junit.Before;
+ Import org.junit.Test;
+
+ Import com.google.inject.AbstractModule;
+ Import com.google.inject.Guice;
+ Import com.google.inject.Injector;
+ Import com.journaldev.di.consumer.MyApplication;
+ Import com.journaldev.di.services.MessageService;
+ Import com.journaldev.di.services.MockMessageService;
+
+ Clase pública MyApplicationTest {
+
+	 Inyector inyector privado;
+	
+	 @Antes de
+	 Public void setUp () throws Excepción {
+		 Injector = Guice.createInjector (new AbstractModule () {
+			
+			 @Anular
+			 Protegido void configure () {
+				 Bind (MessageService.class) .to (MockMessageService.class);
+			 }
+		 });
+	 }
+
+	 @Después
+	 Public void tearDown () throws Excepción {
+		 Inyector = nulo;
+	 }
+
+	 @Prueba
+	 Public void test () {
+		 MyApplication appTest = inyector.getInstance (MyApplication.class);
+		 Assert.assertEquals (true, appTest.sendMessage ("Hola Pankaj", "pankaj@abc.com")) ;;
+	 }
+
+ }
+Observe que estoy MockMessageService clase MockMessageService a MessageService teniendo una implementación de clase anónima de AbstractModule . Esto se hace en el método setUp() que se ejecuta antes de los métodos de prueba.
+
+Descargar
+Google Guice Project
+2467 descargas
+Eso es todo para Google Guice Ejemplo Tutorial. El uso de Google Guice para implementar la inyección de dependencia en la aplicación es muy fácil y lo hace muy bien. Se utiliza en las API de Google, por lo que podemos asumir que es altamente probado y código confiable. Descargue el proyecto desde arriba y juegue con él para aprender más.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
